@@ -103,7 +103,7 @@ void loop() {
     Serial.println("Serial is available");
 
 
-    Serial.println("Serial is available 2");
+    Serial.println("Serial is available");
 
 
 
@@ -117,7 +117,7 @@ void loop() {
       pass = true;
       mySerial.println("AT+CMGS=\"+917878504529\"\r"); //the number where message would be sent
       delay(1000);
-      mySerial.println("some device login to J.A.N.A.N.I. If it wasnt you make sure to report emergency");
+      mySerial.println("some device login to J.A.N.I.N.I. If it wasnt you make sure to report emergency");
 
       delay(100);
 
@@ -131,12 +131,12 @@ void loop() {
   while (pass) {
     lcd.clear();
     lcd.setCursor(0, 0);
-    lcd.print("J.A.N.A.N.I");
+    lcd.print("J.A.N.I.N.I");
 
     // TEMPERATURE FEATURE
     temperaturefeature();
 
-    Serial.println("time aagya");
+    Serial.println("time");
        checksmoke();
        alarmcheck();
        doorcheck();
@@ -178,7 +178,7 @@ void enterpassword() {
 
   delay(1000);  // Delay of 1000 milli seconds or 1 second
 
-  mySerial.println("AT+CMGS=\"+917878504529\"\r");  // Replace x with mobile number
+  mySerial.println("AT+CMGS=\"+917878504529\"\r"); 
 
   delay(1000);
 
@@ -248,7 +248,7 @@ void sendmessagefordevices() {
       lcd.setCursor(0, 1);
       lcd.print(last);
       delay(2000);
-      mySerial.println("device 1 is on");  // The SMS text you want to send
+      mySerial.println("device 1 is on");  
       delay(100);
       mySerial.println((char)26);  // ASCII code of CTRL+Z
       delay(1000);
@@ -381,7 +381,7 @@ void checksmoke() {
     delay(1000);                    // Delay of 1000 milli seconds or 1 second
     mySerial.println("AT+CMGS=\"+917878504529\"\r");
     delay(1000);
-    mySerial.println("aag lag gai bhagoo bahar");  // The SMS text you want to send
+    mySerial.println("fire");  // The SMS text you want to send
     delay(100);
     mySerial.println((char)26);  // ASCII code of CTRL+Z
     delay(1000);
@@ -442,7 +442,7 @@ void doorcheck() {
     delay(1000);                    // Delay of 1000 milli seconds or 1 second
     mySerial.println("AT+CMGS=\"+917878504529\"\r");
     delay(1000);
-    mySerial.println("door pe koi hai");  // The SMS text you want to send
+    mySerial.println("someone is there");  // The SMS text you want to send
     delay(100);
     mySerial.println((char)26);  // ASCII code of CTRL+Z
     delay(1000);
