@@ -1,49 +1,40 @@
 //ALL INCLUDED LIBRARIES
-#include <SoftwareSerial.h>  //software serial library for serial communication between Arduino & sim900 GSM
-#include <LiquidCrystal_I2C.h> // LCD display using I2C to display states of devices and  real time
-#include <Wire.h> // To communicate with LCD
-#include <Sodaq_DS3231.h>// to use and recognise real time and temperature respectively
+#include <SoftwareSerial.h>  
+#include <LiquidCrystal_I2C.h> 
+#include <Wire.h> 
+#include <Sodaq_DS3231.h>
 
 //using inbuilt functions for GSM and LCD
-SoftwareSerial mySerial(5, 4);  //connect Tx pin of GSM to pin 4 of Arduino && Rx pin of GSM to pin no 5
-LiquidCrystal_I2C lcd(0x27, 16, 2); //to define lcd
+SoftwareSerial mySerial(5, 4);  
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 //ALL VARIABLES USED
-
-//initialising variables for features
 int temp = 0;
 bool ask = true;
 int tempask = 1;
 int bulbask = 1;
 bool ask2 = true;
-
-//initialising variables for smoke detector
 int smokeA0 = A0;
-int sensorThres = 750; //keep checking this value 
+int sensorThres = 750;
 
 int hr = 14;
 int mn = 00;
-const int x = 00; //keep values for min and x same 
+const int x = 00;
 bool timechange=true;
 
-//for checking password
 int passcheck = 0;
 bool pass = false;
 
-//voice feature
 int val = 0;
 
-//variables to display problem statement
 String state1 = "OFF";
 String state2 = "OFF";
 String last = "";
-int REY1 = 7; //output for bulb  
-int REY2 = 8; // output for second device
+int REY1 = 7;  
+int REY2 = 8; 
 
-//message to be read by GSM
 String message;
 
-//Ultrasound variables define
 const int trigPin = 9;
 const int echoPin = 11;
 const int buzzer = 12;
@@ -140,53 +131,48 @@ void loop() {
        checksmoke();
        alarmcheck();
        doorcheck();
-   
-
+    
     sendmessagefordevices();
-
-
+    
     mn = x + (millis() / 60000);
-
     if (mn >= 60) {
-     
-    if(timechange)
-    {
-      hr++;
-      timechange=false;
-    }
-      mn = mn - 60;
+        if(timechange)
+          {
+            hr++;
+            timechange=false;
+          }
+         mn = mn - 60;
     }
     if (hr >= 24) {
-
       hr = 00;
     }
   }
 }
 //.............................................................................................//
 void enterpassword() {
-  mySerial.println("AT+CMGF=1");  // set text mode
+  mySerial.println("AT+CMGF=1");  
   Serial.println("11");
   delay(1000);
 
-  mySerial.println("AT+CNMI=2,2,0,0,0");  // AT Command to receive a live SMS
+  mySerial.println("AT+CNMI=2,2,0,0,0");
   Serial.println("22");
   delay(1000);
 
 
   delay(100);
-  mySerial.println("AT+CMGF=1");  //Sets the GSM Module in Text Mode
+  mySerial.println("AT+CMGF=1");
 
-  delay(1000);  // Delay of 1000 milli seconds or 1 second
+  delay(1000);
 
   mySerial.println("AT+CMGS=\"+917878504529\"\r"); 
 
   delay(1000);
 
-  mySerial.println("enter password");  // The SMS text you want to send
+  mySerial.println("enter password");
   Serial.print("Enter password");
   delay(100);
   //
-  mySerial.println((char)26);  // ASCII code of CTRL+Z
+  mySerial.println((char)26);
 
   delay(1000);
 }
@@ -237,9 +223,9 @@ void sendmessagefordevices() {
       lcd.setCursor(14, 1);
       lcd.print(state2);
       delay(2000);
-      mySerial.println("AT+CMGF=1");                    //Sets the GSM Module in Text Mode
-      delay(1000);                                      // Delay of 1000 milli seconds or 1 second
-      mySerial.println("AT+CMGS=\"+917878504529\"\r");  // Replace x with mobile number
+      mySerial.println("AT+CMGF=1");                    
+      delay(1000);                                      
+      mySerial.println("AT+CMGS=\"+917878504529\"\r");  
       last = "Device 1->ON";
       delay(1000);
       lcd.clear();
@@ -250,7 +236,7 @@ void sendmessagefordevices() {
       delay(2000);
       mySerial.println("device 1 is on");  
       delay(100);
-      mySerial.println((char)26);  // ASCII code of CTRL+Z
+      mySerial.println((char)26); 
       delay(1000);
     }
     if (message.indexOf("OFF") > -1) {
@@ -269,11 +255,11 @@ void sendmessagefordevices() {
       lcd.setCursor(14, 1);
       lcd.print(state2);
       delay(2000);
-      mySerial.println("AT+CMGF=1");  //Sets the GSM Module in Text Mode
+      mySerial.println("AT+CMGF=1"); 
 
-      delay(1000);  // Delay of 1000 milli seconds or 1 second
+      delay(1000);
 
-      mySerial.println("AT+CMGS=\"+917878504529\"\r");  // Replace x with mobile number
+      mySerial.println("AT+CMGS=\"+917878504529\"\r");
       delay(1000);
 
       last = "Device 1->OFF";
@@ -285,11 +271,11 @@ void sendmessagefordevices() {
       lcd.print(last);
       delay(2000);
 
-      mySerial.println("device 1 is off");  // The SMS text you want to send
+      mySerial.println("device 1 is off"); 
 
       delay(100);
       //
-      mySerial.println((char)26);  // ASCII code of CTRL+Z
+      mySerial.println((char)26);
 
       delay(1000);
     }
@@ -308,9 +294,9 @@ void sendmessagefordevices() {
       lcd.setCursor(14, 1);
       lcd.print(state2);
       delay(2000);
-      mySerial.println("AT+CMGF=1");                    //Sets the GSM Module in Text Mode
-      delay(1000);                                      // Delay of 1000 milli seconds or 1 second
-      mySerial.println("AT+CMGS=\"+917878504529\"\r");  // Replace x with mobile number
+      mySerial.println("AT+CMGF=1");                   
+      delay(1000);                                   
+      mySerial.println("AT+CMGS=\"+917878504529\"\r");
       last = "Device 2->ON";
       delay(1000);
       lcd.clear();
@@ -319,9 +305,9 @@ void sendmessagefordevices() {
       lcd.setCursor(0, 1);
       lcd.print(last);
       delay(2000);
-      mySerial.println("device 2 is on");  // The SMS text you want to send
+      mySerial.println("device 2 is on"); 
       delay(100);
-      mySerial.println((char)26);  // ASCII code of CTRL+Z
+      mySerial.println((char)26);
       delay(1000);
     }
 
@@ -341,11 +327,11 @@ void sendmessagefordevices() {
       lcd.setCursor(14, 1);
       lcd.print(state2);
       delay(2000);
-      mySerial.println("AT+CMGF=1");  //Sets the GSM Module in Text Mode
+      mySerial.println("AT+CMGF=1");
 
-      delay(1000);  // Delay of 1000 milli seconds or 1 second
+      delay(1000); 
 
-      mySerial.println("AT+CMGS=\"+917878504529\"\r");  // Replace x with mobile number
+      mySerial.println("AT+CMGS=\"+917878504529\"\r"); 
       delay(1000);
 
       last = "Device 2->OFF";
@@ -357,11 +343,11 @@ void sendmessagefordevices() {
       lcd.print(last);
       delay(2000);
 
-      mySerial.println("device 2 is off");  // The SMS text you want to send
+      mySerial.println("device 2 is off"); 
 
       delay(100);
       //
-      mySerial.println((char)26);  // ASCII code of CTRL+Z
+      mySerial.println((char)26);
 
       delay(1000);
     }
@@ -377,13 +363,13 @@ void checksmoke() {
     Serial.println(analogSensor);
     
     Serial.println(" fire");
-    mySerial.println("AT+CMGF=1");  //Sets the GSM Module in Text Mode
-    delay(1000);                    // Delay of 1000 milli seconds or 1 second
+    mySerial.println("AT+CMGF=1");
+    delay(1000);                   
     mySerial.println("AT+CMGS=\"+917878504529\"\r");
     delay(1000);
-    mySerial.println("fire");  // The SMS text you want to send
+    mySerial.println("fire");  
     delay(100);
-    mySerial.println((char)26);  // ASCII code of CTRL+Z
+    mySerial.println((char)26);  
     delay(1000);
 
 
@@ -401,9 +387,9 @@ void alarmcheck() {
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("Good Morning");
-    digitalWrite(buzzer, HIGH);  // Send 1KHz sound signal...
-    delay(5000);                 // ...for 1 sec
-    digitalWrite(buzzer, LOW);   // Stop sound...
+    digitalWrite(buzzer, HIGH);
+    delay(5000);               
+    digitalWrite(buzzer, LOW);  
     delay(10000);
   }
   if (hr == 23 && mn == 30) {
@@ -412,9 +398,9 @@ void alarmcheck() {
     lcd.print("Time to sleep");
     lcd.setCursor(0, 1);
     lcd.print("Good Night");
-    digitalWrite(buzzer, HIGH);  // Send 1KHz sound signal...
-    delay(5000);                 // ...for 1 sec
-    digitalWrite(buzzer, LOW);   // Stop sound...
+    digitalWrite(buzzer, HIGH); 
+    delay(5000);                 
+    digitalWrite(buzzer, LOW);   
     delay(10000);
   }
 }
@@ -438,20 +424,19 @@ void doorcheck() {
   if (safetyDistance <= 10) {
     digitalWrite(buzzer, HIGH);
     digitalWrite(ledPin, HIGH);
-    mySerial.println("AT+CMGF=1");  //Sets the GSM Module in Text Mode
-    delay(1000);                    // Delay of 1000 milli seconds or 1 second
+    mySerial.println("AT+CMGF=1"); 
+    delay(1000);                    
     mySerial.println("AT+CMGS=\"+917878504529\"\r");
     delay(1000);
-    mySerial.println("someone is there");  // The SMS text you want to send
+    mySerial.println("someone is there");
     delay(100);
-    mySerial.println((char)26);  // ASCII code of CTRL+Z
+    mySerial.println((char)26);
     delay(1000);
   } else {
     digitalWrite(buzzer, LOW);
     digitalWrite(ledPin, LOW);
   }
-
-  // Prints the distance on the Serial Monitor
+  
   Serial.print("Distance: ");
   Serial.println(distance);
 }
